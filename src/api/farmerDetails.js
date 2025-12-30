@@ -1,0 +1,98 @@
+
+const Service = require("../services/farmerDetails-service");
+const UserAuth = require("./middlewares/auth");
+const { v4: uuidv4 } = require('uuid');
+
+module.exports = (app) => {
+
+    const service = new Service();
+
+    app.post("/farmerDetails", UserAuth, async (req, res, next) => {
+        try {
+            const { id } = req.query;
+            const { _id, fullName } = req.user;
+            let inputs = req.body;
+            if (id) {
+                inputs.updatedByName = fullName;
+                inputs.updatedById = _id;
+            } else {
+                inputs.id = uuidv4();
+                inputs.addedByName = fullName;
+                inputs.addedById = _id;
+            }
+            const data = await service.Create(inputs, id);
+            return res.json(data);
+        } catch (error) {
+            if (error.code === 11000 && error.keyPattern) {
+                res.status(400).json({ error: Object.keys(error.keyPattern)[0] + ' already exists' });
+            } else if (error.name === 'ValidationError') {
+                return res.status(400).json({ error: error.message });
+            } else {
+                console.error(error);
+                res.status(500).json({ error: 'Internal Server Error' });
+            }
+        }
+    });
+
+    app.delete("/farmerDetails", UserAuth, async (req, res, next) => {
+        try {
+            const { id } = req.query;
+            const data = await service.HardDelete(id);
+            return res.json(data);
+        } catch (err) {
+            next(err);
+        }
+    });
+
+    app.get("/farmerDetails", UserAuth, async (req, res, next) => {
+        try {
+            const data = await service.Get(req.query);
+            return res.json(data);
+        } catch (err) {
+            next(err);
+        }
+    });
+    //filters farmers based on regions
+    app.post("/farmerDetailsfilter", UserAuth, async (req, res, next) => {
+        try {
+            const data = await service.GetFilterFarmers(req);
+            return res.json(data);
+        } catch (err) {
+            next(err);
+        }
+    });
+
+    app.post("/farmerDetails/verify", async (req, res, next) => {
+        try {
+            const data = await service.VerifyNumber(req.body);
+            return res.json(data);
+        } catch (err) {
+            next(err);
+        }
+    });
+
+    app.post("/farmerDetails/login", async (req, res, next) => {
+        try {
+            const data = await service.SignInWithOTP(req.body)
+            return res.json(data);
+        } catch (err) {
+            next(err);
+        }
+    });
+
+    app.post("/farmerDetails/offline", UserAuth, async (req, res, next) => {
+        try {
+            const data = await service.UpdateAll(req);
+            return res.json(data);
+        } catch (error) {
+            if (error.code === 11000 && error.keyPattern) {
+                res.status(400).json({ error: `${Object.keys(error.keyPattern)[0]} already exists` });
+            } else if (error.name === 'ValidationError') {
+                return res.status(400).json({ error: error.message });
+            } else {
+                console.error(error);
+                res.status(500).json({ error: 'Internal Server Error' });
+            }
+        }
+    });
+};

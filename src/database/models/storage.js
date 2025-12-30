@@ -1,0 +1,134 @@
+
+const mongoose = require('mongoose');
+
+const schema = new mongoose.Schema({
+    id: {
+        type: String,
+        required: true
+    },
+    addedByName: {
+        type: String,
+        default: ''
+    },
+    addedById: {
+        type: String,
+        default: ''
+    },
+    updatedByName: {
+        type: String,
+        default: ''
+    },
+    updatedById: {
+        type: String,
+        default: ''
+    },
+    isStorage: {
+        type: Boolean,
+        default: false,
+    },
+    dateOfOperation: {
+        type: String,
+        default: '',
+    },
+    materialUsed: {
+        type: String,
+        default: '',
+    },
+    totalAmountForPurchasingTheMaterialPerAcre: {
+        type: Number,
+        default: 0,
+    },
+    transportationCostForUsingVehicle: {
+        type: Number,
+        default: 0,
+    },
+    doYouUseAnyChemicalTreatmentForTheStoragePurpose: {
+        type: Boolean,
+        default: false,
+    },
+    transportationCostFromHarvestToStorage: {
+        type: Number,
+        default: 0,
+    },
+    netEconomicYieldAfterDrying: {
+        type: Number,
+        default: 0,
+    },
+    sellingPriceOfQuintal: {
+        type: Number,
+        default: 0,
+    },
+    isLabour: {
+        type: Boolean,
+        default: false,
+    },
+    hiredMaleLabours: {
+        type: Number,
+        default: 0,
+    },
+    hiredFemaleLabours: {
+        type: Number,
+        default: 0,
+    },
+    wagesPerDayPerMale: {
+        type: Number,
+        default: 0,
+    },
+    wagesPerDayPerFemale: {
+        type: Number,
+        default: 0,
+    },
+    packingCostPerAcre: {
+        type: Number,
+        default: 0,
+    },
+    domesticMaleLabours: {
+        type: Number,
+        default: 0,
+    },
+    domesticFemaleLabours: {
+        type: Number,
+        default: 0,
+    },
+    contractual: {
+        type: Boolean,
+        default: false,
+    },
+    costPerAcre: {
+        type: Number,
+        default: 0,
+    },
+    isReferancePhotoAvailable: {
+        type: Boolean,
+        default: false,
+    },
+    referancePhoto: {
+        originalName: { type: String, default: '' },
+        blobName: { type: String, default: '' },
+        url: { type: String, default: '' },
+        timeStamp: { type: String, default: '' },
+        coords: { type: Array, default: '' }
+    },
+    seasonId: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    plotId: {
+        type: String,
+        required: true,
+    },
+    farmerId: {
+        type: String,
+        required: true,
+    }
+}, {
+    toJSON: {
+        transform(doc, ret) {
+            delete ret.__v;
+            delete ret._id;
+        },
+    },
+    timestamps: true,
+});
+module.exports = mongoose.model('Storage', schema);
