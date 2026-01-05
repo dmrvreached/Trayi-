@@ -26,12 +26,14 @@ async function sms (number,otp){
         method: 'POST',
         url: 'https://control.msg91.com/api/v5/flow',
         headers: {
-          authkey: '427657Azxf9CoLqZ66b0986aP1',
+          //authkey: '427657Azxf9CoLqZ66b0986aP1',
+          authkey: process.env.MSG_91_AUTH_KEY,
           accept: 'application/json',
           'content-type': 'application/json'
         },
         data :{
             template_id : '6763f42bd6fc054a5b62b413',
+            //template_id : process.env.MSG_91_TEMPLATE_ID,
             short_url : 1,
             realTimeResponse : 1,
             recipients : [
