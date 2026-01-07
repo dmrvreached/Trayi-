@@ -32,14 +32,15 @@ async function sms (number,otp){
           'content-type': 'application/json'
         },
         data :{
-            template_id : '6763f42bd6fc054a5b62b413',
-            //template_id : process.env.MSG_91_TEMPLATE_ID,
+            //template_id : '6763f42bd6fc054a5b62b413',
+            template_id : process.env.MSG_91_TEMPLATE_ID,
             short_url : 1,
             realTimeResponse : 1,
             recipients : [
                 {
                     mobiles: number,
-                    var1: otp,
+                    //var1: otp,
+                    OTP : otp,
                     // VAR2: 'VALUE 2'
                 }
             ]
