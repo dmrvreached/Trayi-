@@ -23,7 +23,9 @@
 //   });
 // }
 
-const admin = require("firebase-admin");
+const admin = require("../../config/firebase");
+
+
 
 async function notification(message) {
   try {

@@ -145,29 +145,57 @@ function generateFarmerAgreementHTML(farmerData) {
   `;
 }
 
-async function generateFarmerAgreementPDF(farmerData) {
-  return new Promise((resolve, reject) => {
-    const html = generateFarmerAgreementHTML(farmerData);
-    
-    const options = {
-      format: 'A4',
-      orientation: 'portrait',
-      border: {
-        top: '0.5in',
-        right: '0.5in',
-        bottom: '0.5in',
-        left: '0.5in'
-      }
-    };
 
-    pdf.create(html, options).toBuffer((err, buffer) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(buffer);
-      }
-    });
+
+const puppeteer = require("puppeteer");
+
+async function generateFarmerAgreementPDF(farmerData) {
+  const html = generateFarmerAgreementHTML(farmerData);
+
+  const browser = await puppeteer.launch({
+    args: ["--no-sandbox", "--disable-setuid-sandbox"]
   });
+
+  const page = await browser.newPage();
+  await page.setContent(html, { waitUntil: "networkidle0" });
+
+  const buffer = await page.pdf({
+    format: "A4",
+    printBackground: true,
+    margin: {
+      top: "0.5in",
+      right: "0.5in",
+      bottom: "0.5in",
+      left: "0.5in"
+    }
+  });
+
+  await browser.close();
+  return buffer;
 }
+// async function generateFarmerAgreementPDF(farmerData) {
+//   return new Promise((resolve, reject) => {
+//     const html = generateFarmerAgreementHTML(farmerData);
+    
+//     const options = {
+//       format: 'A4',
+//       orientation: 'portrait',
+//       border: {
+//         top: '0.5in',
+//         right: '0.5in',
+//         bottom: '0.5in',
+//         left: '0.5in'
+//       }
+//     };
+
+//     pdf.create(html, options).toBuffer((err, buffer) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         resolve(buffer);
+//       }
+//     });
+//   });
+// }
 
 module.exports = generateFarmerAgreementPDF;
