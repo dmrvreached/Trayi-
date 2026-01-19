@@ -56,7 +56,7 @@ module.exports = {
     drying: 'Drying',
     storage: 'Storage',
     amendments: 'Amendments',
-    irrigationFieldObservations: 'Irrigation Field Observations',
+    irrigationFieldObservation: 'Irrigation Field Observations',
   },
   DEFAULT_ROLES: [
     {
