@@ -144,14 +144,23 @@ class Service {
         const intervention = await InterventionRepository.findOne({
           id: season.interventionId,
         });
-        const popPromises = intervention.pop.map(async (pop) => {
+        const popPromises = intervention.pop.map(async (pop) => 
+        {
+          if(pop.status === true) {
           const Database = require(`../database/models/${pop.popName}`);
           const find = await Database.findOne({ seasonId: id });
           if (find) {
             return { status: true, msg: `${pop.popName} is created` };
           }
           return { status: false, msg: `${pop.popName} is not created` };
-        });
+        }
+      return {
+    status: true,
+    msg: `${pop.popName} is skipped`,
+    skipped: true,
+  };
+      }
+        );
         const popResults = await Promise.all(popPromises);
         const msg = popResults.find((error) => error.status == false);
         console.log("msg", msg);
