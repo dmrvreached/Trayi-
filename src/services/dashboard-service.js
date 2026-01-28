@@ -1504,6 +1504,7 @@ class Service {
 
       // Initialize arrays to store fetched data
       const dataCollections = {
+        
         registration: [],
         farmers: [],
         plotDetails: [],
@@ -1515,6 +1516,8 @@ class Service {
         pumpDetails: [],
         irrigation: [],
         weeding: [],
+        ammendments:[],
+        irrigationFieldObservation: [],
         cropProtection: [],
         cropAttributes: [],
         harvesting: [],
@@ -1600,12 +1603,15 @@ class Service {
             pumpdetails: processIrrigation,
             seedDetails: processSeedDetails,
             sowing: processSowing,
+            ammendments: processAmmendments,
             weeding: processWeeding,
             cropAttributes: processCropAttributes,
             drying: processDrying,
             harvesting: processHarvesting,
             threshing: processThreshing,
             storage: processStorage,
+            transplanting: processTransplanting,
+            irrigationFieldObservation:processIrrigationFieldObservation
           };
 
           for (const [key, func] of Object.entries(processingFunctions)) {
@@ -1644,7 +1650,9 @@ class Service {
           );
         }
       };
-
+      const processAmmendments = (data, commonFields) => {
+        pushData("ammendments", formatAmmendments(data, commonFields));
+      }
       const processFertilizerApplications = (data, commonFields) => {
         for (const operation of data.operations) {
           for (const fertilizer of operation.operationItems.fertilizer) {
@@ -1678,6 +1686,12 @@ class Service {
             "Referance Image": operation?.operationItems?.referancePhoto?.url
               ? operation?.operationItems?.referancePhoto?.url
               : "",
+            "Wages/Day (Male)": operation.operationItems?.wagesPerDayPerMale,
+          "Wages/Day (Female)": operation.operationItems?.wagesPerDayPerFemale,
+          "Domestic Male": operation.operationItems?.domesticMaleLabours,
+          "Hired Male": operation.operationItems?.hiredMaleLabours,
+          "Domestic Female": operation.operationItems?.domesticFemaleLabours,
+          "Hired Female": operation.operationItems?.hiredFemaleLabours,
             "Place of Irrigation ": operation?.operationName || "",
           };
           let pumpDetails = {
@@ -1690,6 +1704,7 @@ class Service {
             "Is Controlled Drainage Facility Available": data?.isControlledDrainageFaclitiesAvalible
               ? "Yes"
               : "No",
+            "Duration of Flooding Pre-Plantation Days":data?.durationOfFloodingPrePlantationDays||"",
             "Pump Type": data?.pumpType || "",
             "Pump Company Name": data?.pumpCompanyName || "",
             "Pump HP": data?.pumpHP || "",
@@ -1703,15 +1718,19 @@ class Service {
           pushData("irrigation", irrigationDetails);
         }
       };
-
+      
       const processSeedDetails = (data, commonFields) => {
         pushData("seedDetails", formatSeedDetails(data, commonFields));
       };
-
+      const processTransplanting = (data, commonFields) => {
+        pushData("transplanting", formatTransplanting(data, commonFields));
+      }
       const processSowing = (data, commonFields) => {
         pushData("sowing", formatSowing(data, commonFields));
       };
-
+      const processIrrigationFieldObservation = (data, commonFields) => {
+        pushData("irrigationFieldObservation", formatIrrigationFieldObservation(data, commonFields));
+      }
       const processWeeding = (data, commonFields) => {
         pushData("weeding", formatWeeding(data, commonFields));
       };
@@ -1736,7 +1755,91 @@ class Service {
         pushData("storage", formatStorage(data, commonFields));
       };
 
-      // Formatting functions
+       // Formatting functions
+    const formatIrrigationFieldObservation = (data, commonFields) => {
+    const observations = data?.irrigation_field_observations || [];
+
+    // defaults
+    let wetDate = "";
+    let dryDate = "";
+    let wetImage = "";
+    let dryImage = "";
+    let waterLoggedImage = "";
+    let waterDepth = "";
+
+    observations.forEach((obs) => {
+      switch (obs.observation_type) {
+        case "Wet":
+          wetDate = obs?.date
+            ? moment(obs.date).format("DD-MM-YYYY")
+            : "";
+          wetImage = obs?.photograph?.url || "";
+          break;
+
+        case "Dry":
+          dryDate = obs?.date
+            ? moment(obs.date).format("DD-MM-YYYY")
+            : "";
+          dryImage = obs?.photograph?.url || "";
+          break;
+
+        case "Water logged":
+          waterLoggedImage = obs?.photograph?.url || "";
+          waterDepth = obs?.water_depth_cm ?? "";
+          break;
+
+        default:
+          break;
+      }
+    });
+
+    return {
+      ...commonFields,
+
+      "Wet - Date of Operation": wetDate,
+      "Wet - Image": wetImage,
+      "Dry - Date of Operation": dryDate,
+      "Dry - Image": dryImage,
+
+      "Water Logged Image": waterLoggedImage,
+      "Water Depth in Plot (in cm)": waterDepth,
+
+      "Upload date": moment(data.createdAt).format("DD-MM-YYYY"),
+    };
+};
+const formatAmmendments = (data, commonFields) => {
+  const amendmentFields = {};
+
+  // Always include this
+  amendmentFields["Used Amendments"] =
+    data.haveYouUsedAmendments ? "Yes" : "No";
+
+  // If amendments not used, return early
+
+  data?.amendments_last_3yrs
+    ?.sort((a, b) => a.year - b.year)
+    ?.forEach((yearEntry) => {
+      const year = yearEntry.year;
+
+      yearEntry?.inputs?.forEach((input) => {
+        const inputName = input.input_type
+          .replace(/\//g, " ")
+          .toUpperCase();
+
+        const key = `Year ${year} - ${inputName} (Qty)`;
+        amendmentFields[key] = input.quantity ?? "";
+      });
+    });
+
+  return {
+    ...commonFields,
+    ...amendmentFields,
+    "Upload date": moment(data.createdAt).format("DD-MM-YYYY"),
+  };
+};
+
+
+     
       const formatOperationData = (item, commonFields, operation, type) => {
         return {
           ...commonFields,
@@ -1757,6 +1860,7 @@ class Service {
           "Cost/Acre": operation.operationItems?.costPerAcre,
           "Machine Type": operation.operationItems?.machineType,
           "Machine Applicapble": operation.operationItems?.isMachineHired,
+          "Brand of Machine": operation.operationItems?.brandOfMachine|| "",
           "Machine Status":
             operation.operationItems?.isMachineHired == true
               ? "Hired"
@@ -1807,6 +1911,7 @@ class Service {
           }, {}),
         };
       };
+
 
       const formatPlotDetails = (plot, commonFields) => {
         return {
@@ -2042,8 +2147,64 @@ class Service {
             : "",
         };
       };
-
+      const formatTransplanting = (transplanting, commonFields) => {
+        return {
+          ...commonFields,
+          "Date of Operation": moment(transplanting.dateOfOperation).format(
+            "DD-MM-YYYY"
+          ),
+          contractual: transplanting.contractual,
+          "Machine Applicapble": transplanting.isMachineHired,
+          "Machine Status": transplanting.isMachineHired ? "Hired" : "Owned",
+          "Brand of Machine": transplanting.brandOfMachine,
+          "Machine Type": transplanting.machineType,
+          "Wages/Day (Male)": transplanting.wagesPerDayPerMale,
+          "Wages/Day (Female)": transplanting.wagesPerDayPerFemale,
+          "Domestic Males": transplanting.domesticMaleLabours,
+          "Hired Males": transplanting.hiredMaleLabours,
+          "Domestic Females": transplanting.domesticFemaleLabours,
+          "Hired Females": transplanting.hiredFemaleLabours,
+          "Reference Image": transplanting?.referencePhoto?.url
+            ? transplanting?.referencePhoto?.url
+            : "",
+          "Upload date": moment(transplanting.createdAt).format("DD-MM-YYYY"),
+        }
+      }
       const formatHarvesting = (harvesting, commonFields) => {
+         const residueData = harvesting?.residue_management_last_3yrs?.[0];
+
+  // default residue values
+  const residueFields = {
+    "Residue Management Year": residueData?.year || "",
+    "Removed from Field (%)": "",
+    "Soil Incorporation (%)": "",
+    "Stubble Burning (%)": "",
+    "Fodder for Cattle (%)": "",
+    "Chemical Treatment (%)": "",
+  };
+
+  // map methods to columns
+  residueData?.management_methods?.forEach((item) => {
+    switch (item.method) {
+      case "Removed from field":
+        residueFields["Removed from Field (%)"] = item.percentage;
+        break;
+      case "Soil Incorporation":
+        residueFields["Soil Incorporation (%)"] = item.percentage;
+        break;
+      case "Stubble Burning":
+        residueFields["Stubble Burning (%)"] = item.percentage;
+        break;
+      case "Fodder for Cattle":
+        residueFields["Fodder for Cattle (%)"] = item.percentage;
+        break;
+      case "Chemical Treatment":
+        residueFields["Chemical Treatment (%)"] = item.percentage;
+        break;
+      default:
+        break;
+    }
+  });
         return {
           ...commonFields,
           "Date of Operation": moment(harvesting.dateOfOperation).format(
@@ -2051,6 +2212,8 @@ class Service {
           ),
           contractual: harvesting.contractual,
           "Residue Management": harvesting.residueManagement,
+          "Residue Management": harvesting.residueManagement,
+          ...residueFields,
           "Brand of Machine": harvesting.brandOfMachine,
           "Machine Type": harvesting.machineType,
           "Machine Applicapble": harvesting.isMachineHired,
