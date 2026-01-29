@@ -1558,7 +1558,12 @@ class Service {
             });
             for (const season of seasonsData) {
               cultivationData = await this.CultivationReportCost(season.id);
+              const last3YearsFields = {};
 
+              season?.last_3yrs_history?.forEach((item) => {
+                last3YearsFields[`Year ${item.year} Yield/Acre (Quintals)`] =
+                  item.yield_per_acre_quintals ?? "";
+              });
               commonFields = {
                 ...commonFields,
                 "Plot code": plot.plotCode,
@@ -1572,6 +1577,7 @@ class Service {
                 "crop type": season.cropTypeName,
                 "Crop name": season.cropName,
                 Intervention: season.interventionName,
+                ...last3YearsFields,
               };
               const popsData = await this.POPData([season.id], commonFields);
               processPopData(popsData, commonFields);
@@ -2241,6 +2247,7 @@ const formatAmmendments = (data, commonFields) => {
           ),
           Contractual: threshing.contractual,
           "Cost/Acre": threshing.costPerAcre,
+          "Machine Threshing Applicable": threshing.isMachine,
           "Brand of Machine": threshing.brandOfMachine,
           "Machine Type": threshing.machineType,
           "Machine Status": threshing.isMachineHired ? "Hired" : "Owned",
