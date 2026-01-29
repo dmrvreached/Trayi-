@@ -1504,7 +1504,6 @@ class Service {
 
       // Initialize arrays to store fetched data
       const dataCollections = {
-        
         registration: [],
         farmers: [],
         plotDetails: [],
@@ -1516,7 +1515,7 @@ class Service {
         pumpDetails: [],
         irrigation: [],
         weeding: [],
-        ammendments:[],
+        amendments:[],
         irrigationFieldObservation: [],
         cropProtection: [],
         cropAttributes: [],
@@ -1609,7 +1608,7 @@ class Service {
             pumpdetails: processIrrigation,
             seedDetails: processSeedDetails,
             sowing: processSowing,
-            ammendments: processAmmendments,
+            amendments: processAmendments,
             weeding: processWeeding,
             cropAttributes: processCropAttributes,
             drying: processDrying,
@@ -1656,9 +1655,7 @@ class Service {
           );
         }
       };
-      const processAmmendments = (data, commonFields) => {
-        pushData("ammendments", formatAmmendments(data, commonFields));
-      }
+      
       const processFertilizerApplications = (data, commonFields) => {
         for (const operation of data.operations) {
           for (const fertilizer of operation.operationItems.fertilizer) {
@@ -1740,7 +1737,9 @@ class Service {
       const processWeeding = (data, commonFields) => {
         pushData("weeding", formatWeeding(data, commonFields));
       };
-
+      const processAmendments = (data, commonFields) => {
+        pushData("amendments", formatAmendments(data, commonFields));
+      }
       const processCropAttributes = (data, commonFields) => {
         pushData("cropAttributes", formatCropAttributes(data, commonFields));
       };
@@ -1813,9 +1812,8 @@ class Service {
       "Upload date": moment(data.createdAt).format("DD-MM-YYYY"),
     };
 };
-const formatAmmendments = (data, commonFields) => {
+const formatAmendments = (data, commonFields) => {
   const amendmentFields = {};
-
   // Always include this
   amendmentFields["Used Amendments"] =
     data.haveYouUsedAmendments ? "Yes" : "No";
