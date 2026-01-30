@@ -1,4 +1,5 @@
 const Repository = require("../database/models/intervention");
+const ProjectRepository = require("../database/models/projects");
 const { removeDuplicateObjects } = require('../utils');
 
 class Service {
@@ -7,11 +8,27 @@ class Service {
         const { cropId, cropName, isBaselineDefault } = userInputs;
         if (id) {
             const data = await Repository.findOneAndUpdate({ id }, { $set: userInputs }, { new: true, useFindAndModify: false });
-            if (data) {
-                return { status: true, msg: 'Updated successfully', data };
-            } else {
+            if(!data){
                 return { status: false, msg: 'Failed to Update' };
             }
+            await ProjectRepository.updateMany(
+            {
+                "crops.interventions.interventionId": id
+            },
+            {
+                $set: {
+                "crops.$[].interventions.$[intervention].isBaselineDefault": userInputs.isBaselineDefault,
+                "crops.$[].interventions.$[intervention].interventionName": userInputs.name,
+                "crops.$[].interventions.$[intervention].status": userInputs.status
+                }
+            },
+            {
+                arrayFilters: [
+                { "intervention.interventionId": id }
+                ]
+            }
+            );
+            return { status: true, msg: 'Updated successfully', data };
         } else {
             let exist;
             if (isBaselineDefault === true) {
