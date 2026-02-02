@@ -1,7 +1,7 @@
 const ExcelJS = require('exceljs');
 const fs = require('fs');
 
-async function exportToExcel(data, resource = 'Trayi_Report') {
+async function exportToExcel(data, resource = 'Mrv_Report') {
   try {
     // Create a new workbook
     const workbook = new ExcelJS.Workbook();

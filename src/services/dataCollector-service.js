@@ -369,7 +369,7 @@ class Service {
         $set: {
           projects: [
             {
-              name: "Trayi Lite",
+              name: "Mrv Lite",
               projectId: "c0ef0fef-690c-4c9e-afe9-31e012c2fed1",
               status: true,
             },

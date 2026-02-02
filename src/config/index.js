@@ -61,7 +61,7 @@ module.exports = {
   DEFAULT_ROLES: [
     {
       name: 'SuperAdmin',
-      description: 'He is the super admin for the Trayi Project.',
+      description: 'He is the super admin for the MRV Project.',
       userPermissions: [
         'SuperAdmin'
       ],
@@ -73,7 +73,7 @@ module.exports = {
     },
     {
       name: 'DataCollector',
-      description: 'He is the data collector for the Trayi Project.',
+      description: 'He is the data collector for the MRV Project.',
       userPermissions: [
         'DataCollector'
       ],
@@ -85,7 +85,7 @@ module.exports = {
     },
     {
       name: 'Client',
-      description: 'He is the super admin for the Trayi Project.',
+      description: 'He is the super admin for the MRV Project.',
       userPermissions: [
         'Client'
       ],
@@ -97,16 +97,16 @@ module.exports = {
     }
   ],
   DEFAULT_ADMIN: {
-    fullName: 'AAdmin_Trayi',
-    email: 'admintrayi@gmail.com',
+    fullName: 'AAdmin_Mrv',
+    email: 'adminmrv@gmail.com',
     phone: '919666380289',
     roleName: 'SuperAdmin',
     status: true,
     addedByName: 'Admin',
   },
   DEFAULT_DC: {
-    fullName: 'DataCollector_Trayi',
-    email: 'datacollectortrayi@gmail.com',
+    fullName: 'DataCollector_Mrv',
+    email: 'datacollectormrv@gmail.com',
     phone: '919381267625',
     roleName: 'DataCollector',
     status: true,

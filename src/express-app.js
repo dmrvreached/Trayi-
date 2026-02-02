@@ -72,7 +72,7 @@ module.exports = async (app) => {
     definition: {
       openapi: "3.0.0",
       info: {
-        title: "Trayi-lite API's Document",
+        title: "Mrv-lite API's Document",
         version: "1.0.0",
         description:
           "API documentation provides information about the endpoints, parameters, responses, and usage examples of an API to help developers understand how to use it in their applications.",
@@ -97,7 +97,7 @@ module.exports = async (app) => {
   app.use(morgan(morganFormat));
 
   app.get("/", (req, res) => {
-    res.send("Trayi-lite APIs");
+    res.send("Mrv-lite APIs");
   });
 
   //api

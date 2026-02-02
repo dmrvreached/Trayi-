@@ -38,7 +38,7 @@ cron.schedule('0 7 * * *', async () => {
                 to: dc.deviceToken,
                 notification: {
                   title: 'Collect plant height data today!',
-                  body: `It's been ${days} days since Sowing. Open the Trayi app now to measure and submit plant height for accurate analysis. For farmer_Id: ${farmer.farmerCode}`,
+                  body: `It's been ${days} days since Sowing. Open the Mrv app now to measure and submit plant height for accurate analysis. For farmer_Id: ${farmer.farmerCode}`,
                 }
               };
               await notification(message);
