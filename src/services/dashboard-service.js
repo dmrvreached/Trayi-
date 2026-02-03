@@ -1514,6 +1514,7 @@ class Service {
         fertilizerApplications: [],
         pumpDetails: [],
         irrigation: [],
+        waterManagement:[],
         weeding: [],
         amendments:[],
         irrigationFieldObservation: [],
@@ -1605,6 +1606,7 @@ class Service {
             farmOperations: processFarmOperations,
             fertilizerApplications: processFertilizerApplications,
             irrigation: processIrrigation,
+            waterManagement:processWaterManagement,
             pumpdetails: processIrrigation,
             seedDetails: processSeedDetails,
             sowing: processSowing,
@@ -1626,6 +1628,20 @@ class Service {
       };
 
       // Individual processing functions for each data type
+
+      const processWaterManagement = (data,commonFields) =>{
+        for (const operation of data.operations) {
+          pushData(
+            "waterManagement",
+            formatWaterManagement(
+              null,
+              commonFields,
+              operation,
+              "Water Management"
+            )
+          );
+        }
+      }
       const processCropProtection = (data, commonFields) => {
         for (const operation of data.operations) {
           for (const chemical of operation.operationItems.chemicals) {
@@ -1761,88 +1777,97 @@ class Service {
       };
 
        // Formatting functions
-    const formatIrrigationFieldObservation = (data, commonFields) => {
-    const observations = data?.irrigation_field_observations || [];
+      const formatIrrigationFieldObservation = (data, commonFields) => {
+          const observations = data?.irrigation_field_observations || [];
 
-    // defaults
-    let wetDate = "";
-    let dryDate = "";
-    let wetImage = "";
-    let dryImage = "";
-    let waterLoggedImage = "";
-    let waterDepth = "";
+          // defaults
+          let wetDate = "";
+          let dryDate = "";
+          let wetImage = "";
+          let dryImage = "";
+          let waterLoggedImage = "";
+          let waterDepth = "";
 
-    observations.forEach((obs) => {
-      switch (obs.observation_type) {
-        case "Wet":
-          wetDate = obs?.date
-            ? moment(obs.date).format("DD-MM-YYYY")
-            : "";
-          wetImage = obs?.photograph?.url || "";
-          break;
+          observations.forEach((obs) => {
+            switch (obs.observation_type) {
+              case "Wet":
+                wetDate = obs?.date
+                  ? moment(obs.date).format("DD-MM-YYYY")
+                  : "";
+                wetImage = obs?.photograph?.url || "";
+                break;
 
-        case "Dry":
-          dryDate = obs?.date
-            ? moment(obs.date).format("DD-MM-YYYY")
-            : "";
-          dryImage = obs?.photograph?.url || "";
-          break;
+              case "Dry":
+                dryDate = obs?.date
+                  ? moment(obs.date).format("DD-MM-YYYY")
+                  : "";
+                dryImage = obs?.photograph?.url || "";
+                break;
 
-        case "Water logged":
-          waterLoggedImage = obs?.photograph?.url || "";
-          waterDepth = obs?.water_depth_cm ?? "";
-          break;
+              case "Water logged":
+                waterLoggedImage = obs?.photograph?.url || "";
+                waterDepth = obs?.water_depth_cm ?? "";
+                break;
 
-        default:
-          break;
-      }
-    });
+              default:
+                break;
+            }
+          });
 
-    return {
-      ...commonFields,
+          return {
+            ...commonFields,
 
-      "Wet - Date of Operation": wetDate,
-      "Wet - Image": wetImage,
-      "Dry - Date of Operation": dryDate,
-      "Dry - Image": dryImage,
+            "Wet - Date of Operation": wetDate,
+            "Wet - Image": wetImage,
+            "Dry - Date of Operation": dryDate,
+            "Dry - Image": dryImage,
 
-      "Water Logged Image": waterLoggedImage,
-      "Water Depth in Plot (in cm)": waterDepth,
+            "Water Logged Image": waterLoggedImage,
+            "Water Depth in Plot (in cm)": waterDepth,
 
-      "Upload date": moment(data.createdAt).format("DD-MM-YYYY"),
-    };
-};
-const formatAmendments = (data, commonFields) => {
-  const amendmentFields = {};
-  // Always include this
-  amendmentFields["Used Amendments"] =
-    data.haveYouUsedAmendments ? "Yes" : "No";
+            "Upload date": moment(data.createdAt).format("DD-MM-YYYY"),
+          };
+      };
+      const formatAmendments = (data, commonFields) => {
+        const amendmentFields = {};
+        // Always include this
+        amendmentFields["Used Amendments"] =
+          data.haveYouUsedAmendments ? "Yes" : "No";
 
-  // If amendments not used, return early
+        // If amendments not used, return early
 
-  data?.amendments_last_3yrs
-    ?.sort((a, b) => a.year - b.year)
-    ?.forEach((yearEntry) => {
-      const year = yearEntry.year;
+        data?.amendments_last_3yrs
+          ?.sort((a, b) => a.year - b.year)
+          ?.forEach((yearEntry) => {
+            const year = yearEntry.year;
 
-      yearEntry?.inputs?.forEach((input) => {
-        const inputName = input.input_type
-          .replace(/\//g, " ")
-          .toUpperCase();
+            yearEntry?.inputs?.forEach((input) => {
+              const inputName = input.input_type
+                .replace(/\//g, " ")
+                .toUpperCase();
 
-        const key = `Year ${year} - ${inputName} (Qty)`;
-        amendmentFields[key] = input.quantity ?? "";
-      });
-    });
+              const key = `Year ${year} - ${inputName} (Qty)`;
+              amendmentFields[key] = input.quantity ?? "";
+            });
+          });
 
-  return {
-    ...commonFields,
-    ...amendmentFields,
-    "Upload date": moment(data.createdAt).format("DD-MM-YYYY"),
-  };
-};
+        return {
+          ...commonFields,
+          ...amendmentFields,
+          "Upload date": moment(data.createdAt).format("DD-MM-YYYY"),
+        };
+      };
 
-
+      const formatWaterManagement = (item,commonFields,operation,type) =>{
+        return {
+          ...commonFields,
+          "Date of Operation": moment(operation.operationItems?.dateOfOperation).format("DD-MM-YYYY"),
+          "Drainage Event": operation.operationName || "",
+          "Refernce Image": operation.operationItems?.referncePhoto?.url
+            ? data?.referncePhoto?.url
+            : "",
+        };
+      };
      
       const formatOperationData = (item, commonFields, operation, type) => {
         return {
