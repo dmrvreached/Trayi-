@@ -6,14 +6,11 @@ async function updateOperationDates(data, popName) {
     try {
         // Check if operation dates exist for the given seasonId
         const exist = await Repository.findOne({ seasonId: data.seasonId });
-
         // Determine valid date based on input or updatedAt field
         const validDate = dateValidate(data.dateOfOperation ? data.dateOfOperation : new Date(data.updatedAt));
-
         if (exist) {
             // If operation dates exist for seasonId, find if popId already exists in dateArray
             const find = exist.dateArray.find(item => item.popId === data.id);
-
             if (find) {
                 // If popId exists in dateArray, update its details
                 if (POP_RESOURCES_DATA.drying === popName || POP_RESOURCES_DATA.threshing === popName || POP_RESOURCES_DATA.storage === popName) {

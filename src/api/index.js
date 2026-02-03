@@ -37,6 +37,7 @@ module.exports = {
     sowing: require('./sowing'),
     seedDetails: require('./seedDetails'),
     irrigation: require('./irrigation'),
+    waterManagement: require('./waterManagement'),
     machineTypes : require('./machineType'),
     machineBrands : require('./machineBrand'),
     fertilizer : require('./fertilizer'),

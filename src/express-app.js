@@ -17,6 +17,7 @@ const {
   sowing,
   seedDetails,
   irrigation,
+  waterManagement,
   operationDates,
   farmOperations,
   soilInformation,
@@ -121,6 +122,7 @@ module.exports = async (app) => {
   sowing(app);
   seedDetails(app);
   irrigation(app);
+  waterManagement(app);
   operationDates(app);
   farmOperations(app);
   soilInformation(app);

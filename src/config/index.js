@@ -47,6 +47,7 @@ module.exports = {
     transplanting: 'Transplanting',
     sowing: 'Sowing',
     irrigation: 'Irrigation',
+    waterManagement: 'Water Management',
     fertilizerApplications: 'Fertilizer Applications',
     weeding: 'Weeding',
     cropProtection: 'crop Protection',
