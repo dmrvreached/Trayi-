@@ -14,7 +14,7 @@ async function uploadFile(file) {
     return {
         originalName: file.originalname,
         blobName: blobName,
-        url: `https://${CONTAINER_NAME}.blob.core.windows.net/${CONTAINER_NAME}/${blobName}${SAS_TOKEN}`
+        url: `https://${CONTAINER_NAME}.blob.core.windows.net/${CONTAINER_NAME}/${blobName}`
     }
 }
 
@@ -30,7 +30,7 @@ async function uploadPDFBuffer(buffer, fileName) {
         }
     });
     
-    return `https://${CONTAINER_NAME}.blob.core.windows.net/${CONTAINER_NAME}/${blobName}${SAS_TOKEN}`;
+    return `https://${CONTAINER_NAME}.blob.core.windows.net/${CONTAINER_NAME}/${blobName}`;
 }
 
 async function listBlobs() {
