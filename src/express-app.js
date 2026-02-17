@@ -47,6 +47,10 @@ const {
   machineTypes,
   machineBrands,
   fertilizer,
+  postHarvest,
+  organicInputs,
+  nitrogenFertilizers,
+  pesticides,
   seedTreatmentTypes,
   seedTreatments,
   chemicalNames,
@@ -119,7 +123,7 @@ module.exports = async (app) => {
   seedVarity(app);
   projects(app);
   transplanting(app);
-  sowing(app);
+  sowing(app);  
   seedDetails(app);
   irrigation(app);
   waterManagement(app);
@@ -134,6 +138,8 @@ module.exports = async (app) => {
   cropProtection(app);
   weeding(app);
   fertilizerApplications(app);
+  postHarvest(app);
+  pesticides(app);
   seasonDetails(app);
   plotDetails(app);
   farmerDetails(app);
@@ -143,6 +149,8 @@ module.exports = async (app) => {
   machineTypes(app);
   machineBrands(app);
   fertilizer(app);
+  nitrogenFertilizers(app);
+  organicInputs(app);
   seedTreatmentTypes(app);
   seedTreatments(app);
   chemicalNames(app);

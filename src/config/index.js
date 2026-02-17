@@ -43,6 +43,10 @@ module.exports = {
   },
   POP_RESOURCES_DATA: {
     farmOperations: 'Farm Operations',
+    organicInputs : 'Organic Inputs',
+    nitrogenFertilizers: 'Nitrogen Fertilizers',
+    postHarvest: 'Post Harvest',
+    pesticides: 'Pesticides',
     seedDetails: 'Seed Details',
     transplanting: 'Transplanting',
     sowing: 'Sowing',

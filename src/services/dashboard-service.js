@@ -1512,6 +1512,7 @@ class Service {
         seedDetails: [],
         sowing: [],
         fertilizerApplications: [],
+        nitrogenFertilizers:[],
         pumpDetails: [],
         irrigation: [],
         waterManagement:[],
@@ -1521,6 +1522,9 @@ class Service {
         cropProtection: [],
         cropAttributes: [],
         harvesting: [],
+        postHarvesting:[],
+        organicInputs:[],
+        pesticides:[],
         threshing: [],
         drying: [],
         storage: [],
@@ -1605,6 +1609,10 @@ class Service {
             cropProtection: processCropProtection,
             farmOperations: processFarmOperations,
             fertilizerApplications: processFertilizerApplications,
+            nitrogenFertilizers: processNitrogenFertilizers,
+            postHarvesting: processPostHarvesting,
+            organicInputs: processOrganicInputs,
+            pesticides: processPesticides,
             irrigation: processIrrigation,
             waterManagement:processWaterManagement,
             pumpdetails: processIrrigation,
@@ -1629,6 +1637,28 @@ class Service {
 
       // Individual processing functions for each data type
 
+      const processNitrogenFertilizers = (data, commonFields) => {
+        for (const operation of data.operations) {
+          pushData(
+            "nitrogenFertilizers",
+            formatNitrogenFertilizers(
+              null,
+              commonFields,
+              operation,
+              "Nitrogen Fertilizers"
+            )
+          );
+        }
+      }
+      const processOrganicInputs = (data, commonFields) => {
+        pushData("organicInputs", formatOrganicInputs(data, commonFields))
+      }
+      const processPesticides = (data, commonFields) => {
+        pushData("pesticides", formatPesticides(data, commonFields))
+      }
+      const processPostHarvesting = (data, commonFields) => {
+        pushData("postHarvesting", formatPostHarvesting(data, commonFields));
+      }
       const processWaterManagement = (data,commonFields) =>{
         for (const operation of data.operations) {
           pushData(
@@ -1857,17 +1887,57 @@ class Service {
           "Upload date": moment(data.createdAt).format("DD-MM-YYYY"),
         };
       };
-
+      const formatPostHarvesting = (data, commonFields) =>{
+        return {
+          ...commonFields,
+          "Date of Operation": moment(data.operationItems?.dateOfOperation).format("DD-MM-YYYY"),
+          "Rice Yield (Quintals)": data.riceYieldInQuintals || "",
+          "Rice Harvest (Quintals)": data.riceHarvestInQuintals || "",
+          "burningBiomassResidue" : data.burningBiomassResidue ? "Yes" : "No",
+          "biomassResidueUsedFor": data.biomassResidueUsedFor || "",
+        }
+      }
+      const formatOrganicInputs = (data, commonFields)=>{
+        return {
+          ...commonFields,
+          "Date of Appplication": moment(data.operationItems?.dateOfOperation).format("DD-MM-YYYY"),
+          "Organic Input Type": data.organicInputType || "",
+          "Quantity Per Acre (Kg)": data.quantityInkgPerAcre || "",
+          "Reference Image": data.operationItems?.referancePhoto?.url
+            ? data.operationItems?.referancePhoto?.url
+            : "",
+        }
+      }
       const formatWaterManagement = (item,commonFields,operation,type) =>{
         return {
           ...commonFields,
           "Date of Operation": moment(operation.operationItems?.dateOfOperation).format("DD-MM-YYYY"),
           "Drainage Event": operation.operationName || "",
           "Refernce Image": operation.operationItems?.referncePhoto?.url
-            ? data?.referncePhoto?.url
+            ? operation.operationItems?.referncePhoto?.url
             : "",
         };
       };
+
+      const formatNitrogenFertilizers = (item,commonFields,operation,type) =>{
+        return {
+          ...commonFields,
+          "Date of Application": moment(operation.operationItems?.dateOfApplication).format("DD-MM-YYYY"),
+          "Name of Fertilizer": item?.nameOfTheFertilizer || "",
+          "Quantity/Acre": item?.quantityPerAcre || "",
+          "Reference Image": operation.operationItems?.referancePhoto?.url
+            ? operation.operationItems?.referancePhoto?.url
+            : "",
+        }
+      }
+
+      const formatPesticides = (data, commonFields) => {
+        return {
+          ...commonFields,
+          "Date of Appplication": moment(data.operationItems?.dateOfOperation).format("DD-MM-YYYY"),
+          "Name of the Pesticide": data.nameOfThePesticide || "",
+        }
+      }
      
       const formatOperationData = (item, commonFields, operation, type) => {
         return {

@@ -1,3 +1,4 @@
+const e = require("cors");
 const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema(
@@ -29,10 +30,6 @@ const schema = new mongoose.Schema(
     dateOfRegistration: {
       type: String,
       default: "",
-    },
-    farmerCategory: {
-      type: String,
-      required: true,
     },
     farmerName: {
       type: String,
@@ -103,93 +100,28 @@ const schema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    educationInYears: {
+    isOwner: {
+      type: Boolean,
+      default: true,
+    },
+    ownerName: {
       type: String,
       default: "",
     },
-    maritalStatus: {
+    lesseMobile: {
       type: String,
       default: "",
     },
-    familySize: {
+    lesseExpiryDate: {
       type: String,
       default: "",
     },
-    membershipInFamilysOriganization: {
-      type: Boolean,
-      default: false,
-    },
-    farmExperience: {
-      type: String,
-      default: "",
-    },
-    distanceToTheMainMarketYard: {
-      type: String,
-      default: "",
-    },
-    distanceToTheMainRoad: {
-      type: String,
-      default: "",
-    },
-    havingKisanCreditCard: {
-      type: Boolean,
-      default: false,
-    },
-    optedForInstitutionalCropLoanInThisCroppingSeason: {
-      type: Boolean,
-      default: false,
-    },
-    ifOptedFromTheCropLoanThenWhichBank: {
-      type: String,
-      default: "",
-    },
-    optedForCropInsurance: {
-      type: Boolean,
-      default: false,
-    },
-    havingAssuredIrrigation: {
-      type: Boolean,
-      default: false,
-    },
-    havingLiveStock: {
-      type: Boolean,
-      default: false,
-    },
-    addOffFarmIncome: {
-      type: Boolean,
-      default: false,
-    },
-    havingAJobCardUnderMGNREGA: {
-      type: Boolean,
-      default: false,
-    },
-    havingTelevision: {
-      type: Boolean,
-      default: false,
-    },
-    havingSmartPhone: {
-      type: Boolean,
-      default: false,
-    },
-    havingBankAccount: {
-      type: Boolean,
-      default: false,
-    },
-    bankName: {
-      type: String,
-      default: "",
-    },
-    branchName: {
-      type: String,
-      default: "",
-    },
-    ifscCode: {
-      type: String,
-      default: "",
-    },
-    accountNumber: {
-      type: String,
-      default: "",
+    lesseAgreementPhoto: {
+      originalName: { type: String, default: "" },
+      blobName: { type: String, default: "" },
+      url: { type: String, default: "" },
+      timeStamp: { type: String, default: "" },
+      coords: { type: Array, default: "" },
     },
     otp: { type: Number, default: 1234 },
     phoneVerification: { type: Boolean, default: false },
@@ -218,6 +150,6 @@ const schema = new mongoose.Schema(
       },
     },
     timestamps: true,
-  }
+  },
 );
 module.exports = mongoose.model("Farmerdetails", schema);
